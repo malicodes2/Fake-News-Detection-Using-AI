@@ -21,29 +21,33 @@ An end-to-end, full-stack Machine Learning web application designed to detect an
 
 ## 🔬 Machine Learning Architecture
 
-```
-Raw Article Text
-       │
-       ├───────────────────────────────────────────────┐
-       ▼                                               ▼
-[ Text Preprocessing ]                     [ Stylometric Extraction ]
-- Lowercasing                              - Lexical Diversity (Type-Token Ratio)
-- Regex URL & noise removal                - Average Word Length
-- NLTK Stopword elimination                - Punctuation Density Ratio
-       │                                               │
-       ▼                                               ▼
-[ TF-IDF Vectorizer ]                         [ 3D Dense Matrix ]
-- N-gram Range: (1, 2)                                 │
-- Sublinear TF Scaling                                 │
-- Max Features: 50,000                                 │
-       │                                               │
-       └───────────────────────┬───────────────────────┘
-                               ▼
-            [ SciPy Sparse Matrix Horizontal Stack ]
-                               ▼
-               [ Calibrated Multinomial Naive Bayes ]
-                               ▼
-                 Prediction: Real / Fake + Confidence %
+```mermaid
+flowchart TD
+    INPUT["Raw News Article (Headline / Text)"] --> PRE["Text Preprocessing"]
+    INPUT --> STYLO["Stylometric Extraction"]
+
+    subgraph ContentPipeline ["Semantic & Content Pipeline"]
+        PRE --> CLEAN["Lowercasing & Regex Cleaning"]
+        CLEAN --> STOP["Stopword Removal (NLTK)"]
+        STOP --> TFIDF["TF-IDF Vectorizer (1-2 N-grams, 50,000 Max Features)"]
+    end
+
+    subgraph StylePipeline ["Structural & Stylistic Pipeline"]
+        STYLO --> FEAT1["Lexical Diversity (Type-Token Ratio)"]
+        STYLO --> FEAT2["Average Word Length"]
+        STYLO --> FEAT3["Punctuation Density Ratio"]
+        FEAT1 & FEAT2 & FEAT3 --> DENSE["3D Dense Stylometric Matrix"]
+    end
+
+    TFIDF --> STACK["SciPy Feature Concatenation (sparse.hstack)"]
+    DENSE --> STACK
+
+    STACK --> CALIB["Calibrated Classifier (CalibratedClassifierCV - 5-Fold)"]
+    CALIB --> MNB["Multinomial Naive Bayes (alpha=1.0)"]
+
+    MNB --> OUT{"Inference Engine"}
+    OUT --> REAL["Real News (Confidence Score %)"]
+    OUT --> FAKE["Fake News (Confidence Score %)"]
 ```
 
 ### 1. Linguistic Stylometric Features
