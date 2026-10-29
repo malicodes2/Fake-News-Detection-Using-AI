@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Datasets - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Dataset Management</h1>
+    <p>Upload and manage training datasets for the AI model</p>
+</div>
+
+<!-- Upload form -->
+<div class="card">
+    <h3 class="card-title">Upload New Dataset</h3>
+    <p class="text-sm text-muted mb-2">
+        Upload a CSV file with columns: <strong>text</strong> (or title) and <strong>label</strong> (REAL/FAKE)
+    </p>
+
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('admin.datasets') }}">
+        <div class="form-group">
+            <label for="dataset_file">Select CSV File</label>
+            <input type="file" name="dataset_file" id="dataset_file" class="form-control" accept=".csv" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload Dataset</button>
+    </form>
+</div>
+
+<!-- Retrain button -->
+<div class="card">
+    <div class="flex-between">
+        <div>
+            <h3 class="card-title mb-0">Retrain Model</h3>
+            <p class="text-sm text-muted">
+                Train the AI model using the latest uploaded dataset
+            </p>
+        </div>
+        <form method="POST" action="{{ url_for('admin.retrain') }}">
+            <button type="submit" class="btn btn-success"
+                onclick="this.innerHTML='<span class=spinner></span> Training...'; this.disabled=true; this.form.submit();">
+                Retrain Model
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Dataset list -->
+<div class="card">
+    <h3 class="card-title">Uploaded Datasets</h3>
+
+    {% if datasets %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Filename</th>
+                    <th>Rows</th>
+                    <th>Uploaded By</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ds in datasets %}
+                <tr>
+                    <td>{{ ds.id }}</td>
+                    <td style="font-weight: 500; color: var(--text-primary);">{{ ds.filename }}</td>
+                    <td>{{ "{:,}".format(ds.row_count) }}</td>
+                    <td>{{ ds.uploader.username }}</td>
+                    <td>{{ ds.uploaded_at.strftime('%d %b %Y, %H:%M') }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.delete_dataset', dataset_id=ds.id) }}"
+                            style="display:inline;" onsubmit="return confirm('Delete this dataset?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📁</div>
+        <p>No datasets uploaded yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

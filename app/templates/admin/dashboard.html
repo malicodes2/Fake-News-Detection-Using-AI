@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Admin Dashboard</h1>
+    <p>System overview and management</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value accent">{{ total_users }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Articles Analyzed</div>
+        <div class="stat-value">{{ total_articles }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Datasets</div>
+        <div class="stat-value">{{ total_datasets }}</div>
+    </div>
+</div>
+
+<!-- Latest Model Performance -->
+<div class="card">
+    <h3 class="card-title">Latest Model Performance</h3>
+
+    {% if latest_metrics %}
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-name">Accuracy</div>
+            <div class="metric-value">{{ "%.1f"|format(latest_metrics.accuracy * 100) }}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-name">Precision</div>
+            <div class="metric-value">{{ "%.1f"|format(latest_metrics.precision * 100) }}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-name">Recall</div>
+            <div class="metric-value">{{ "%.1f"|format(latest_metrics.recall * 100) }}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-name">F1 Score</div>
+            <div class="metric-value">{{ "%.1f"|format(latest_metrics.f1_score * 100) }}%</div>
+        </div>
+    </div>
+    <p class="text-sm text-muted">
+        Trained on {{ latest_metrics.training_samples }} samples &middot;
+        {{ latest_metrics.trained_at.strftime('%d %b %Y, %H:%M') }}
+    </p>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <p>No model trained yet. <a href="{{ url_for('admin.datasets') }}">Upload a dataset</a> and train the model.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+    <h3 class="card-title">Quick Actions</h3>
+    <div class="actions-grid">
+        <a href="{{ url_for('admin.users') }}" class="action-card">
+            <span class="action-icon">👥</span>
+            Manage Users
+        </a>
+        <a href="{{ url_for('admin.datasets') }}" class="action-card">
+            <span class="action-icon">📁</span>
+            Manage Datasets
+        </a>
+        <a href="{{ url_for('admin.metrics') }}" class="action-card">
+            <span class="action-icon">📈</span>
+            View Metrics
+        </a>
+        <a href="{{ url_for('admin.reports') }}" class="action-card">
+            <span class="action-icon">📋</span>
+            Usage Reports
+        </a>
+    </div>
+</div>
+{% endblock %}

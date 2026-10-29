@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Result - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Analysis Result</h1>
+    <p>Here's what our AI model found</p>
+</div>
+
+<div class="result-container">
+    <div class="result-card result-{{ 'real' if result.label == 'Real' else 'fake' }}">
+        <div class="result-icon">
+            {% if result.label == 'Real' %}✅{% else %}⚠️{% endif %}
+        </div>
+
+        <div class="result-label">
+            This article appears to be {{ result.label }}
+        </div>
+
+        <p class="result-subtitle">
+            {% if result.label == 'Real' %}
+            Our model suggests this news is likely authentic and credible.
+            {% else %}
+            Our model flagged this article as potentially fake or misleading.
+            {% endif %}
+        </p>
+
+        <div class="confidence-wrapper">
+            <div class="confidence-label">
+                <span>Confidence</span>
+                <span>{{ result.confidence }}%</span>
+            </div>
+            <div class="confidence-bar-bg">
+                <div class="confidence-bar-fill" style="width: {{ result.confidence }}%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Article Details -->
+<div class="card mt-3">
+    <h3 class="card-title">Submitted Article</h3>
+    {% if article.title %}
+    <div class="article-details mb-2">
+        <h4>Title</h4>
+        <p style="font-size: 0.925rem; color: var(--text-primary); font-weight: 500;">{{ article.title }}</p>
+    </div>
+    {% endif %}
+    <div class="article-details">
+        <h4>Content</h4>
+        <div class="article-text-preview">{{ article.content[:800] }}{% if article.content|length > 800 %}…{% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="btn-group mt-2">
+    <a href="{{ url_for('user.analyze') }}" class="btn btn-primary">Analyze Another</a>
+    <a href="{{ url_for('user.history') }}" class="btn btn-outline">View History</a>
+</div>
+{% endblock %}

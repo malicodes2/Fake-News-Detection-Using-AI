@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Welcome, {{ current_user.username }}</h1>
+    <p>Your fake news detection overview</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Analyses</div>
+        <div class="stat-value accent">{{ total_articles }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Detected Real</div>
+        <div class="stat-value success">{{ real_count }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Detected Fake</div>
+        <div class="stat-value danger">{{ fake_count }}</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+    <h3 class="card-title">Quick Actions</h3>
+    <div class="actions-grid">
+        <a href="{{ url_for('user.analyze') }}" class="action-card">
+            <span class="action-icon">🔍</span>
+            Analyze News
+        </a>
+        <a href="{{ url_for('user.history') }}" class="action-card">
+            <span class="action-icon">📋</span>
+            View History
+        </a>
+        <a href="{{ url_for('user.profile') }}" class="action-card">
+            <span class="action-icon">👤</span>
+            My Profile
+        </a>
+    </div>
+</div>
+
+<!-- Recent -->
+{% if recent_articles %}
+<div class="card">
+    <h3 class="card-title">Recent Analyses</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Result</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in recent_articles %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('user.article_detail', article_id=article.id) }}"
+                            style="color: var(--accent); text-decoration: none; font-weight: 500;">
+                            {{ (article.title or 'Untitled')[:50] }}{% if (article.title or '')|length > 50 %}…{% endif
+                            %}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ 'real' if article.prediction == 'Real' else 'fake' }}">
+                            {{ article.prediction }}
+                        </span>
+                    </td>
+                    <td>{{ article.confidence }}%</td>
+                    <td>{{ article.analyzed_at.strftime('%d %b %Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

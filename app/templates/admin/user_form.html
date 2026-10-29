@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} User - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ action }} User</h1>
+    <p>{{ 'Create a new user account' if action == 'Add' else 'Update user information' }}</p>
+</div>
+
+<div class="card" style="max-width: 560px;">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            {{ form.username(class="form-control", placeholder="Enter username", id="username") }}
+            {% for error in form.username.errors %}
+            <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            {{ form.email(class="form-control", placeholder="user@example.com", id="email") }}
+            {% for error in form.email.errors %}
+            <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password {% if action == 'Edit' %}<span class="text-muted text-sm">(leave blank to
+                    keep current)</span>{% endif %}</label>
+            {{ form.password(class="form-control", placeholder="Enter password", id="password") }}
+            {% for error in form.password.errors %}
+            <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="role">Role</label>
+            {{ form.role(class="form-control", id="role") }}
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">{{ action }} User</button>
+            <a href="{{ url_for('admin.users') }}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

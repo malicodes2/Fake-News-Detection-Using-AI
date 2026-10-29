@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Reports - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1>Usage Reports</h1>
+        <p>System-wide usage statistics and analytics</p>
+    </div>
+    <a href="{{ url_for('admin.export_reports') }}" class="btn btn-primary"
+        style="background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: none;">
+        ⬇️ Download CSV Report
+    </a>
+</div>
+
+<!-- Overview Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Users</div>
+        <div class="stat-value accent">{{ total_users }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Admins</div>
+        <div class="stat-value">{{ total_admins }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Articles Analyzed</div>
+        <div class="stat-value">{{ total_articles }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Datasets</div>
+        <div class="stat-value">{{ total_datasets }}</div>
+    </div>
+</div>
+
+<!-- Classification Breakdown -->
+<div class="card">
+    <h3 class="card-title">Classification Breakdown</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Detected Real</div>
+            <div class="stat-value success">{{ total_real }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Detected Fake</div>
+            <div class="stat-value danger">{{ total_fake }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Per-User Activity -->
+<div class="card">
+    <h3 class="card-title">Per-User Activity</h3>
+
+    {% if user_stats %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Articles Analyzed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in user_stats %}
+                <tr>
+                    <td style="font-weight: 500; color: var(--text-primary);">{{ stat.username }}</td>
+                    <td>{{ stat.article_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>No user activity recorded yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Login - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="auth-subtitle">Sign in to your account</p>
+
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                {{ form.email(class="form-control", placeholder="you@example.com", id="email") }}
+                {% for error in form.email.errors %}
+                <span class="field-error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                {{ form.password(class="form-control", placeholder="Enter your password", id="password") }}
+                {% for error in form.password.errors %}
+                <span class="field-error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+        </form>
+
+        <p class="auth-footer">
+            Don't have an account? <a href="{{ url_for('auth.register') }}">Create one</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

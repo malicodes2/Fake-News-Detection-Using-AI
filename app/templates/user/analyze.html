@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Analyze News - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Analyze News</h1>
+    <p>Submit a news article or headline to check if it's real or fake</p>
+</div>
+
+<div class="card">
+    <form method="POST" action="{{ url_for('user.analyze') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label for="title">Headline / Title</label>
+            {{ form.title(class="form-control", placeholder="Enter the news headline...", id="title") }}
+            {% for error in form.title.errors %}
+            <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="content">Article Text</label>
+            {{ form.content(class="form-control", placeholder="Paste the full article text here for more accurate results...", id="content", rows=8) }}
+            {% for error in form.content.errors %}
+            <span class="field-error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg"
+            onclick="this.innerHTML='<span class=spinner></span> Analyzing...'; this.disabled=true; this.form.submit();">
+            🔍 Analyze Article
+        </button>
+    </form>
+</div>
+
+<div class="card" style="animation-delay: 100ms;">
+    <h3 class="card-title">💡 Tips for Best Results</h3>
+    <ul style="color: var(--text-secondary); font-size: 0.875rem; padding-left: 1.25rem; line-height: 2;">
+        <li>Paste the <strong>full article text</strong> for highest accuracy</li>
+        <li>Headlines alone give decent results but less confidence</li>
+        <li>The model works best with English-language news articles</li>
+        <li>Include the article body, not just the title</li>
+    </ul>
+</div>
+{% endblock %}

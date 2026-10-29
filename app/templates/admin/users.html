@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Users - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="flex-between">
+        <div>
+            <h1>User Management</h1>
+            <p>Manage all registered users</p>
+        </div>
+        <a href="{{ url_for('admin.add_user') }}" class="btn btn-primary">+ Add User</a>
+    </div>
+</div>
+
+<div class="card">
+    {% if users %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td style="font-weight: 500; color: var(--text-primary);">{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="badge badge-{{ 'admin' if user.role == 'admin' else 'user' }}">
+                            {{ user.role|capitalize }}
+                        </span>
+                    </td>
+                    <td>{{ user.created_at.strftime('%d %b %Y') }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ url_for('admin.edit_user', user_id=user.id) }}"
+                                class="btn btn-outline btn-sm">Edit</a>
+                            {% if user.id != current_user.id %}
+                            <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                style="display:inline;" onsubmit="return confirm('Delete user {{ user.username }}?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <p>No users found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

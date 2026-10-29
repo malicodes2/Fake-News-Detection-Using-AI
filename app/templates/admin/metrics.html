@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Metrics - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Model Performance</h1>
+    <p>Track model accuracy and training history</p>
+</div>
+
+<!-- Current Metrics -->
+{% if latest %}
+<div class="card">
+    <h3 class="card-title">Current Model</h3>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-name">Accuracy</div>
+            <div class="metric-value">{{ "%.1f"|format(latest.accuracy * 100) }}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-name">Precision</div>
+            <div class="metric-value">{{ "%.1f"|format(latest.precision * 100) }}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-name">Recall</div>
+            <div class="metric-value">{{ "%.1f"|format(latest.recall * 100) }}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-name">F1 Score</div>
+            <div class="metric-value">{{ "%.1f"|format(latest.f1_score * 100) }}%</div>
+        </div>
+    </div>
+    <p class="text-sm text-muted">
+        {{ "{:,}".format(latest.training_samples) }} training samples &middot;
+        Last trained {{ latest.trained_at.strftime('%d %b %Y, %H:%M') }}
+    </p>
+</div>
+{% endif %}
+
+<!-- Training History -->
+<div class="card">
+    <h3 class="card-title">Training History</h3>
+
+    {% if metrics_list %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Accuracy</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1 Score</th>
+                    <th>Samples</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in metrics_list %}
+                <tr>
+                    <td>{{ m.trained_at.strftime('%d %b %Y, %H:%M') }}</td>
+                    <td><strong>{{ "%.1f"|format(m.accuracy * 100) }}%</strong></td>
+                    <td>{{ "%.1f"|format(m.precision * 100) }}%</td>
+                    <td>{{ "%.1f"|format(m.recall * 100) }}%</td>
+                    <td>{{ "%.1f"|format(m.f1_score * 100) }}%</td>
+                    <td>{{ "{:,}".format(m.training_samples) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <p>No training history yet. <a href="{{ url_for('admin.datasets') }}">Train the model</a> to see metrics here.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

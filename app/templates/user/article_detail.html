@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title or 'Article' }} - Fake News Detector{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="flex-between">
+        <div>
+            <h1>{{ article.title or 'Untitled Article' }}</h1>
+            <p>Analyzed on {{ article.analyzed_at.strftime('%d %b %Y at %H:%M') }}</p>
+        </div>
+        <a href="{{ url_for('user.history') }}" class="btn btn-outline">← Back to History</a>
+    </div>
+</div>
+
+<!-- Result Card -->
+<div class="result-container">
+    <div class="result-card result-{{ 'real' if result.label == 'Real' else 'fake' }}">
+        <div class="result-icon">
+            {% if result.label == 'Real' %}✅{% else %}🚫{% endif %}
+        </div>
+        <div class="result-label">
+            {{ result.label }} News
+        </div>
+        <div class="result-subtitle">
+            The AI model classified this article as <strong>{{ result.label|lower }}</strong>
+        </div>
+
+        <div class="confidence-wrapper">
+            <div class="confidence-label">
+                <span>Confidence</span>
+                <span>{{ "%.1f"|format(result.confidence) }}%</span>
+            </div>
+            <div class="confidence-bar-bg">
+                <div class="confidence-bar-fill" style="--width: {{ result.confidence|round|int }}%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Article Content -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3 class="card-title">Submitted Article Text</h3>
+    <div class="article-preview">
+        {{ article.content }}
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="btn-group" style="margin-top: 1rem;">
+    <a href="{{ url_for('user.analyze') }}" class="btn btn-primary">Analyze Another</a>
+    <a href="{{ url_for('user.history') }}" class="btn btn-outline">Back to History</a>
+</div>
+{% endblock %}
